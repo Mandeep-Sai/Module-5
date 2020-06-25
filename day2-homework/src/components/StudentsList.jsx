@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Container,Table,Button,Modal,Form,Row,Col} from 'react-bootstrap'
+import {Link} from 'react-router-dom'
 
 export class StudentsList extends Component {
     constructor(props) {
@@ -54,7 +55,7 @@ export class StudentsList extends Component {
                         return(
                             <tr>
                                 <td>{student.id}</td>
-                                <td>{student.name}</td>
+                                <td><Link to={ `/student/${student.id}`}>{student.name}</Link></td>
                                 <td>{student.surname}</td>
                                 <td>{student.email}</td>
                                 <td>{student.dob}</td>

@@ -1,1 +1,10 @@
-[{"name":"mandeep","surname":"bandi","email":"bandimandeep7@gmail.com","dob":"15.08.1996","id":"3qhn43744kbrxzlzi","NumberOfProjects":3},{"name":"mandeep","surname":"bandi","email":"bandimandeeppay@gmail.com","dob":"15.08.1996","id":"3qhn438wskbs01wah"},{"name":"mandeep","surname":"bandi","email":"bandimandeeppaypal@gmail.com","dob":"15.08.1996","id":"3qhn43b40kbs02zjd","NumberOfProjects":1}]
+[
+    {
+        "name": "sai",
+        "surname": "bandi",
+        "email": "bandimandeep@gmail.com",
+        "id": "3qhn439fwkburb6qw",
+        "NumberOfProjects": 2,
+        "imageUrl": "http://127.0.0.1:3001/img/students/3qhn439fwkburb6qw.png"
+    }
+]

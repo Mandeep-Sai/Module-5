@@ -2,9 +2,14 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const uniqid = require('uniqid')
-const e = require('express')
+const fse = require('fs-extra')
+const multer = require('multer')
+const { join } = require('path')
+
+const upload = multer({})
 
 const studentsFilePath = path.join(__dirname ,"students.json")
+const studentImagesPath = path.join(__dirname,"../../public/img/students")
 
 const router = express.Router()
 
@@ -12,6 +17,7 @@ router.get('/',(req,res)=>{
     const bufferFileContent = fs.readFileSync(studentsFilePath)
     const fileContent = bufferFileContent.toString()
     res.send(JSON.parse(fileContent)) // json parse used convert the html type to json type
+    
 })
 
 router.get('/:id',(req,res)=>{
@@ -46,6 +52,25 @@ router.post('/',(req,res)=>{
       res.send('ERROR')
     }
  
+})
+
+router.post("/:id/uploadPhoto",upload.single('studentPhoto'),(req,res)=>{
+  console.log(studentImagesPath)
+  try {
+    fse.writeFile(join(studentImagesPath,`${req.params.id}.${req.file.originalname.split('.').pop()}`),req.file.buffer)
+    const bufferFileContent = fs.readFileSync(studentsFilePath)
+    const studentsArray = JSON.parse(bufferFileContent.toString())
+
+    studentsArray.forEach(student =>{
+      if(student.id === req.params.id){
+        student['imageUrl'] = `http://localhost:3001/img/students/${req.params.id}.${req.file.mimetype.slice(-3)}`
+      }
+    })
+    fs.writeFileSync(studentsFilePath, JSON.stringify(studentsArray))
+    res.send('uploaded successfully')
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 router.put("/:id",(req,res)=>{

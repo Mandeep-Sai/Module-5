@@ -3,10 +3,15 @@ const {check,validationResult } = require('express-validator')
 const path = require('path')
 const fs = require('fs')
 const uniqid = require('uniqid')
+const fse = require('fs-extra')
+const multer = require('multer')
+const {join} = require('path')
 
 const router = express.Router()
+const upload = multer({})
 const projectsFilePath = path.join(__dirname,"projects.json")
 const studentsFilePath = path.join(__dirname,'../students/students.json')
+const projectImagesPath = path.join(__dirname,"../../public/img/projects")
 
 
 // router.get("/",(req,res)=>{
@@ -52,13 +57,24 @@ router.get('/:studentId/projects',(req,res)=>{
 
 })
 
+router.get("/:id/reviews",(req,res)=>{
+    const bufferFileContent = fs.readFileSync(projectsFilePath)
+    const fileContent = bufferFileContent.toString()
+    const projectsArray = JSON.parse(fileContent)
+    projectsArray.forEach(project =>{
+        if(project.id === req.params.id){
+            res.send(project.reviews)
+        }
+    })
+})
+
 router.post('/',
 [
     check("studentId").isLength({min : 15}).withMessage('Invalid Id'),
 ],
     (req,res,next)=>{
     const errors = validationResult(req)
-    // console.log(errors)
+    console.log(errors)
     if(!errors.isEmpty()){
         const err = new Error()
         err.httpStatusCode = 404
@@ -67,7 +83,7 @@ router.post('/',
         console.log(err)
     }
 
-    const newProject = {...req.body, id:uniqid()}
+    const newProject = {...req.body, id:uniqid(),reviews :[]}
     const studentId = req.body.studentId
     const bufferFileContent = fs.readFileSync(projectsFilePath)
     const fileContent = bufferFileContent.toString()
@@ -94,7 +110,40 @@ router.post('/',
         
 })
 
+router.post("/:id/reviews",(req,res)=>{
+    const review = {...req.body, id:uniqid()}
+    const bufferFileContent = fs.readFileSync(projectsFilePath)
+    const fileContent = bufferFileContent.toString()
+    const projectsArray = JSON.parse(fileContent)
+    projectsArray.forEach(project =>{
+        if(project.id === req.params.id){
+            project['reviews'].push(review)
+        }
+    })
+    fs.writeFileSync(projectsFilePath,JSON.stringify(projectsArray))
+    // projectsArray.push(req.body)
+    res.send(projectsArray)
+})
 
+router.post("/:id/uploadPhoto",upload.single("projectPhoto"),async(req,res)=>{
+    console.log(projectImagesPath)
+    try {
+      fse.writeFile(join(projectImagesPath,`${req.params.id}.${req.file.mimetype.slice(-3)}`),req.file.buffer)
+      const bufferFileContent = fs.readFileSync(projectsFilePath)
+      const projectsArray = JSON.parse(bufferFileContent.toString())
+  
+      projectsArray.forEach(project =>{
+        if(project.id === req.params.id){
+          project['imageUrl'] = `http://localhost:3000/img/projects/${req.params.id}.${req.file.mimetype.slice(-3)}`
+        }
+      })
+      fs.writeFileSync(projectsFilePath, JSON.stringify(projectsArray))
+      res.send(projectsArray)
+    } catch (error) {
+      console.log(error)
+    }
+  })
+  
 router.put("/:id",(req,res)=>{
     const bufferFileContent = fs.readFileSync(projectsFilePath)
     const projectsArray = JSON.parse(bufferFileContent.toString())
