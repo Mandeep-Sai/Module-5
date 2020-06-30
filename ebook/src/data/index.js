@@ -1,0 +1,5 @@
+export const fantasy = require('./fantasy.json')
+export const history = require('./history.json')
+export const horror = require('./horror.json')
+export const romance = require('./romance.json')
+export const scifi = require('./scifi.json')
