@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "123455",
+    "comment": "A good book but definitely I don't like many parts of the plot",
+    "rate": 3,
+    "elementId": "1234",
+    "createdAt": "2019-08-01T12:46:45.895Z"
+  },
+  {
+    "_id": "123455",
+    "comment": "second review",
+    "rate": 3,
+    "elementId": "1234",
+    "createdAt": "2019-08-01T12:46:45.895Z"
+  },
+  {
+    "_id": "123455",
+    "comment": "third review",
+    "rate": 3,
+    "elementId": "1234",
+    "createdAt": "2019-08-01T12:46:45.895Z"
+  },
+  {
+    "_id": "24snn3xckc5zv9e1",
+    "comment": "edited review",
+    "rate": 6,
+    "elementId": "1234",
+    "createdAt": "2020-07-03T09:07:25.896Z"
+  },
+  {
+    "_id": "24snn9yskc5zvdkb",
+    "comment": "edited review",
+    "rate": 6,
+    "elementId": "5d318e1a8541744830bef139",
+    "createdAt": "2020-07-03T09:07:31.306Z"
+  }
+]

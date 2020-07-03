@@ -8,12 +8,19 @@ const { Transform } = require("json2csv");
 const { createReadStream } = require("fs");
 const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
+//
 const nodemailer = require("nodemailer");
+const nodeMailGun = require("nodemailer-mailgun-transport");
 //
 const pdfPrinter = require("pdfmake");
 const { getMaxListeners } = require("process");
 
 const attendeesPath = join(__dirname, "attendees.json");
+
+function base64_encode(file) {
+  var bitmap = fs.readFileSync(file);
+  return new Buffer(bitmap).toString("base64");
+}
 
 router.get("/", (req, res) => {
   const data = readFile(attendeesPath);
@@ -56,7 +63,7 @@ router.post("/", async (req, res) => {
   attachment = fs.readFileSync(pathToAttachment).toString("base64");
 
   sgMail.setApiKey(
-    "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"
+    "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"
   );
   console.log(process.env.SENDGRID_API_KEY);
   const msg = {
@@ -134,4 +141,125 @@ router.post("/nodemailer", async (req, res) => {
     }
   });
 });
+
+// using mailgun
+/*
+router.post("/mailgun", async (req, res) => {
+  const newAttendee = { ...req.body, ticket: uniqid(), date: "15.08.2020" };
+  var fonts = {
+    Roboto: {
+      normal: "fonts/Roboto-Regular.ttf",
+    },
+  };
+  var printer = new pdfPrinter(fonts);
+  const docDefinition = {
+    content: [
+      (id = "Ticket:" + newAttendee.ticket),
+      (name = newAttendee.name),
+      (email = newAttendee.email),
+      (eventdate = "On:" + newAttendee.date),
+    ],
+  };
+  var pdfDoc = printer.createPdfKitDocument(docDefinition);
+  pdfDoc.pipe(fs.createWriteStream(`server/tickets/${newAttendee.ticket}.pdf`));
+  pdfDoc.end();
+
+  //attachemnt
+  pathToAttachment = `${__dirname}/../tickets/${newAttendee.ticket}.pdf`;
+  attachment = fs.readFileSync(pathToAttachment).toString("base64");
+  // send mail
+  const auth = {
+    auth: {
+      api_key: "",
+      domain: "",
+    },
+  };
+  //
+  let transporter = nodemailer.createTransport(nodeMailGun(auth));
+  //
+  let mailOptions = {
+    from: "bandimandeep7pay@gmail.com",
+    to: newAttendee.email,
+    subject: "Welcome ",
+    text: "Hello world",
+    html: "<b>Yo</b>",
+    attachments: [
+      {
+        filename: `${newAttendee.ticket}.pdf`,
+        path: pathToAttachment,
+      },
+    ],
+  };
+  //
+  transporter.sendMail(mailOptions, function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("message sent");
+    }
+  });
+});
+*/
+router.post("/sgmail", async (req, res) => {
+  const newAttendee = { ...req.body, ticket: uniqid(), date: "15.08.2020" };
+  const data = await readFile(attendeesPath);
+  data.push(newAttendee);
+  await writeFile(attendeesPath, data);
+  // generate pdf
+  var fonts = {
+    Roboto: {
+      normal: "fonts/Roboto-Regular.ttf",
+    },
+  };
+  var printer = new pdfPrinter(fonts);
+  const docDefinition = {
+    content: [
+      (id = "Ticket:" + newAttendee.ticket),
+      (name = newAttendee.name),
+      (email = newAttendee.email),
+      (eventdate = "On:" + newAttendee.date),
+    ],
+  };
+  console.log(docDefinition);
+  var pdfDoc = printer.createPdfKitDocument(docDefinition);
+  pdfDoc.pipe(fs.createWriteStream(`server/tickets/${newAttendee.ticket}.pdf`));
+  pdfDoc.end();
+  //
+  const pathToAttachment = `${__dirname}/../tickets/${newAttendee.ticket}.pdf`;
+  //const attachment = fs.readFileSync(pathToAttachment).toString("base64");
+  console.log(pathToAttachment);
+  fs.readFile(pathToAttachment, async function (err, data) {
+    if (data) {
+      sgMail.setApiKey(process.env.sgApiKey);
+      const data_64 = base64_encode(pathToAttachment);
+      const msg = {
+        to: "bandimandeep7@gmail.com",
+        from: "bandimandeep7pay@gmail.com",
+        subject: "Subject",
+        text: "Text",
+        //html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+        attachments: [
+          {
+            content: data_64,
+            filename: newAttendee.ticket,
+            type: "application/pdf",
+            // disposition: "attachment",
+          },
+        ],
+      };
+      sgMail
+        .send(msg)
+        .then((response) => {
+          res.send("Success");
+        })
+        .catch((err) => {
+          res.send(err);
+        });
+    }
+  });
+  // const sgMail = require("@sendgrid/mail");
+
+  //res.send("test");
+});
+
 module.exports = router;
