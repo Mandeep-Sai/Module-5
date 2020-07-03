@@ -29,18 +29,18 @@ router.get("/", async (req, res) => {
   } else if (req.query.year && req.query.title && req.query.type) {
     axios
       .get(
-        `http://www.omdbapi.com/?apikey=c0b9281d&t=${req.query.title}&y=${req.query.year}&plot=${req.query.type}`
+        `https://www.omdbapi.com/?apikey=c0b9281d&t=${req.query.title}&y=${req.query.year}&plot=${req.query.type}`
       )
       .then((response) => res.send(response.data));
   } else if (req.query.year && req.query.title) {
     axios
       .get(
-        `http://www.omdbapi.com/?apikey=c0b9281d&t=${req.query.title}&y=${req.query.year}`
+        `https://www.omdbapi.com/?apikey=c0b9281d&t=${req.query.title}&y=${req.query.year}`
       )
       .then((response) => res.send(response.data));
   } else if (req.query.title) {
     axios
-      .get(`http://www.omdbapi.com/?apikey=c0b9281d&t=${req.query.title}`)
+      .get(`https://www.omdbapi.com/?apikey=c0b9281d&t=${req.query.title}`)
       .then((response) => res.send(response.data));
   }
 });
