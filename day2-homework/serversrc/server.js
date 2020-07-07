@@ -1,23 +1,30 @@
-const express = require('express')
-const studentRoutes = require('./students/index')
-const projectRoutes = require('./projects')
+const express = require("express");
+const studentRoutes = require("./students/index");
+const projectRoutes = require("./projects");
 // const reviewsRoutes = require('./reviews')
-const cors = require('cors')
-const endpoints = require('express-list-endpoints')
-const {invalidIdHandler,catchAllHandler} = require('./errorHandling')
+const cors = require("cors");
+const endpoints = require("express-list-endpoints");
+const { invalidIdHandler, catchAllHandler } = require("./errorHandling");
+const mongoose = require("mongoose");
 
-const server = express()
-server.use(cors())
+const server = express();
+server.use(cors());
 // server.use()
-server.use(express.json()) 
-server.use("/students" , studentRoutes)
-server.use("/projects",projectRoutes)
+server.use(express.json());
+server.use("/students", studentRoutes);
+server.use("/projects", projectRoutes);
 // server.use("/reviews")
 
-server.use(invalidIdHandler)
-server.use(catchAllHandler)
+server.use(invalidIdHandler);
+server.use(catchAllHandler);
 
-console.log(endpoints(server))
-server.listen(3001,()=>{
-    console.log('Running on 3001')
-})
+mongoose
+  .connect("mongodb://localhost:27017/students_portfolio", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(
+    server.listen(3002, () => {
+      console.log("Running on 3002");
+    })
+  );
