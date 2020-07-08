@@ -91,6 +91,7 @@ export class StudentsList extends Component {
     }
   };
   async handlePageChange(pageNumber) {
+    console.log(pageNumber);
     const offset = pageNumber - 1 * this.state.studentsPerPage;
     this.setState({ activePage: pageNumber });
     let response = await fetch(
@@ -242,7 +243,9 @@ export class StudentsList extends Component {
         <Pagination
           activePage={this.state.activePage}
           itemsCountPerPage={1}
-          totalItemsCount={this.state.numberOfStudents}
+          totalItemsCount={
+            this.state.numberOfStudents / this.state.studentsPerPage
+          }
           itemClass="page-item"
           linkClass="page-link"
           // pageRangeDisplayed={5}
