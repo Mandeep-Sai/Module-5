@@ -22,9 +22,14 @@ export class StudentsList extends Component {
       currentStudent: [],
       activePage: 1,
       studentsPerPage: 1,
+      numberOfStudents: "",
     };
   }
   componentDidMount = async () => {
+    let defaultResponse = await fetch(`http://127.0.0.1:3002/students`, {
+      method: "GET",
+      headers: new Headers({ "content-type": "application/json" }),
+    });
     let response = await fetch(
       `http://127.0.0.1:3002/students?limit=${this.state.studentsPerPage}`,
       {
@@ -33,8 +38,10 @@ export class StudentsList extends Component {
       }
     );
     let parsedJson = await response.json();
+    let defaultParsed = await defaultResponse.json();
     this.setState({
       students: parsedJson,
+      numberOfStudents: defaultParsed.length,
     });
     //console.log(parsedJson);
   };
@@ -235,15 +242,12 @@ export class StudentsList extends Component {
         <Pagination
           activePage={this.state.activePage}
           itemsCountPerPage={1}
-          totalItemsCount={3}
+          totalItemsCount={this.state.numberOfStudents}
           itemClass="page-item"
           linkClass="page-link"
           // pageRangeDisplayed={5}
           onChange={this.handlePageChange.bind(this)}
         />
-        {this.state.students.length > 0 ? (
-          <Pagin total={this.state.numberOfStudents} />
-        ) : null}
       </Container>
     );
   }
