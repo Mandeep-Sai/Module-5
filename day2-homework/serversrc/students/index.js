@@ -1,13 +1,24 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const studentSchema = require("./schema");
+const q2m = require("query-to-mongo");
 
 const router = express.Router();
 
 // GET all students
 router.get("/", async (req, res) => {
-  const students = await studentSchema.find();
-  res.send(students);
+  try {
+    const query = q2m(req.query);
+    //console.log(query);
+    const students = await studentSchema
+      .find()
+      .limit(query.options.limit)
+      .skip(query.options.skip)
+      .sort(query.options.sort);
+    res.send(students);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //GET student by ID
@@ -21,7 +32,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //POST
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
     const checkEmail = await studentSchema.find({ email: req.body.email });
     //console.log(checkEmail);
@@ -33,7 +44,8 @@ router.post("/", async (req, res) => {
       res.send("Posted Successfully");
     }
   } catch (error) {
-    console.log(error);
+    //next(error);
+    res.send(error.errors);
   }
 });
 

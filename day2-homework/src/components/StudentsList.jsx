@@ -9,16 +9,35 @@ import {
   Col,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Pagin from "./Pagin";
+import Pagination from "react-js-pagination";
 
 export class StudentsList extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      students: [],
       show: false,
       currentStudent: [],
+      activePage: 1,
+      studentsPerPage: 1,
     };
   }
+  componentDidMount = async () => {
+    let response = await fetch(
+      `http://127.0.0.1:3002/students?limit=${this.state.studentsPerPage}`,
+      {
+        method: "GET",
+        headers: new Headers({ "content-type": "application/json" }),
+      }
+    );
+    let parsedJson = await response.json();
+    this.setState({
+      students: parsedJson,
+    });
+    //console.log(parsedJson);
+  };
   delStudent = async (id) => {
     let response = await fetch("http://127.0.0.1:3002/students/" + id, {
       method: "DELETE",
@@ -64,6 +83,21 @@ export class StudentsList extends Component {
       alert("Error");
     }
   };
+  async handlePageChange(pageNumber) {
+    const offset = pageNumber - 1 * this.state.studentsPerPage;
+    this.setState({ activePage: pageNumber });
+    let response = await fetch(
+      `http://127.0.0.1:3002/students?offset=${offset}&limit=${this.state.studentsPerPage}`,
+      {
+        method: "GET",
+        headers: new Headers({ "content-type": "application/json" }),
+      }
+    );
+    let parsedJson = await response.json();
+    this.setState({
+      students: parsedJson,
+    });
+  }
   render() {
     return (
       <Container>
@@ -79,7 +113,7 @@ export class StudentsList extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.list.map((student) => {
+            {this.state.students.map((student) => {
               return (
                 <tr>
                   <td>{student._id}</td>
@@ -198,6 +232,18 @@ export class StudentsList extends Component {
             </Button>
           </Modal.Footer>
         </Modal>
+        <Pagination
+          activePage={this.state.activePage}
+          itemsCountPerPage={1}
+          totalItemsCount={3}
+          itemClass="page-item"
+          linkClass="page-link"
+          // pageRangeDisplayed={5}
+          onChange={this.handlePageChange.bind(this)}
+        />
+        {this.state.students.length > 0 ? (
+          <Pagin total={this.state.numberOfStudents} />
+        ) : null}
       </Container>
     );
   }

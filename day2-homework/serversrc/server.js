@@ -4,7 +4,11 @@ const projectRoutes = require("./projects");
 // const reviewsRoutes = require('./reviews')
 const cors = require("cors");
 const endpoints = require("express-list-endpoints");
-const { invalidIdHandler, catchAllHandler } = require("./errorHandling");
+const {
+  invalidIdHandler,
+  invalidNameHandler,
+  catchAllHandler,
+} = require("./errorHandling");
 const mongoose = require("mongoose");
 
 const server = express();
@@ -16,6 +20,7 @@ server.use("/projects", projectRoutes);
 // server.use("/reviews")
 
 server.use(invalidIdHandler);
+server.use(invalidNameHandler);
 server.use(catchAllHandler);
 
 mongoose

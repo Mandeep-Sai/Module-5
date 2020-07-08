@@ -13,15 +13,7 @@ class sendStudentForm extends Component {
       country: "",
     },
   };
-  componentDidMount = async () => {
-    let response = await fetch("http://127.0.0.1:3002/students", {
-      method: "GET",
-      headers: new Headers({ "content-type": "application/json" }),
-    });
-    let parsedJson = await response.json();
-    this.setState({ list: parsedJson });
-    console.log(parsedJson);
-  };
+
   updateForm = (e) => {
     let id = e.currentTarget.id;
     let formInfo = this.state.formInfo;
@@ -43,7 +35,7 @@ class sendStudentForm extends Component {
     } else if (response.status === 409) {
       alert("Email already exists");
     } else {
-      console.log("error");
+      console.log(response);
     }
   };
   render() {
