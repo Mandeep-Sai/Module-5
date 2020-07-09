@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const studentSchema = require("./schema");
+const studentModel = require("./schema");
 const q2m = require("query-to-mongo");
 
 const router = express.Router();
@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
   try {
     const query = q2m(req.query);
     //console.log(query);
-    const students = await studentSchema
+    const students = await studentModel
       .find()
       .limit(query.options.limit)
       .skip(query.options.skip)
@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 //GET student by ID
 router.get("/:id", async (req, res) => {
   try {
-    const student = await studentSchema.findById(req.params.id);
+    const student = await studentModel.findById(req.params.id);
     res.send(student);
   } catch (error) {
     console.log(error);
@@ -34,12 +34,12 @@ router.get("/:id", async (req, res) => {
 //POST
 router.post("/", async (req, res, next) => {
   try {
-    const checkEmail = await studentSchema.find({ email: req.body.email });
+    const checkEmail = await studentModel.find({ email: req.body.email });
     //console.log(checkEmail);
     if (checkEmail.length !== 0) {
       res.status(409).send("student with same email exists");
     } else {
-      const newStudent = new studentSchema(req.body);
+      const newStudent = new studentModel(req.body);
       await newStudent.save();
       res.send("Posted Successfully");
     }
@@ -49,9 +49,17 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+//POST project for a specific student
+
+router.post("/projects/:id", async (req, res) => {
+  const project = { ...req.body };
+  await studentModel.addProject(req.params.id, project);
+  res.send("added");
+});
+
 //POST checkmail
 router.post("/checkEmail", async (req, res) => {
-  const checkEmail = await studentSchema.find({ email: req.body.email });
+  const checkEmail = await studentModel.find({ email: req.body.email });
   console.log(checkEmail);
   if (checkEmail.length !== 0) {
     res.send("student with same email exists");
@@ -63,7 +71,7 @@ router.post("/checkEmail", async (req, res) => {
 //EDIT or PUT by ID
 router.put("/:id", async (req, res) => {
   try {
-    await studentSchema.findByIdAndUpdate(req.params.id, req.body);
+    await studentModel.findByIdAndUpdate(req.params.id, req.body);
     res.send("Edited Successfully");
   } catch (error) {
     console.log(error);
@@ -73,7 +81,7 @@ router.put("/:id", async (req, res) => {
 //DELETE by ID
 router.delete("/:id", async (req, res) => {
   try {
-    await studentSchema.findByIdAndDelete(req.params.id);
+    await studentModel.findByIdAndDelete(req.params.id);
     res.send("Deleted Successfully");
   } catch (error) {
     console.log(error);

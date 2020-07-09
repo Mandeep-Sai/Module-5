@@ -43,6 +43,7 @@ export class student extends Component {
             </p>
           </Col>
         </Row>
+        <Row></Row>
       </Container>
     );
   }
