@@ -21,7 +21,7 @@ export class StudentsList extends Component {
       show: false,
       currentStudent: [],
       activePage: 1,
-      studentsPerPage: 1,
+      studentsPerPage: 2,
       numberOfStudents: "",
     };
   }
@@ -91,8 +91,7 @@ export class StudentsList extends Component {
     }
   };
   async handlePageChange(pageNumber) {
-    console.log(pageNumber);
-    const offset = pageNumber - 1 * this.state.studentsPerPage;
+    const offset = (pageNumber - 1) * this.state.studentsPerPage;
     this.setState({ activePage: pageNumber });
     let response = await fetch(
       `http://127.0.0.1:3002/students?offset=${offset}&limit=${this.state.studentsPerPage}`,
@@ -242,10 +241,8 @@ export class StudentsList extends Component {
         </Modal>
         <Pagination
           activePage={this.state.activePage}
-          itemsCountPerPage={1}
-          totalItemsCount={
-            this.state.numberOfStudents / this.state.studentsPerPage
-          }
+          itemsCountPerPage={this.state.studentsPerPage}
+          totalItemsCount={this.state.numberOfStudents}
           itemClass="page-item"
           linkClass="page-link"
           // pageRangeDisplayed={5}
