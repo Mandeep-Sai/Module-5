@@ -79,6 +79,12 @@ studentSchema.static("addProject", async function (id, project) {
     }
   );
 });
+
+studentSchema.static("deleteProject", async function (id, projId) {
+  await studentModel.findByIdAndUpdate(id, {
+    $pull: { projects: { _id: projId } },
+  });
+});
 const studentModel = mongoose.model("student", studentSchema);
 
 module.exports = studentModel;

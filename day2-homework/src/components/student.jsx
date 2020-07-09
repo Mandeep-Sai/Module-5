@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Container, Col, Row } from "react-bootstrap";
-
+import { Container, Col, Row, Table, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 export class student extends Component {
   constructor(props) {
     super(props);
@@ -8,6 +8,7 @@ export class student extends Component {
     this.state = {
       studentId: this.props.match.params.id,
       studentInfo: [],
+      projects: [],
     };
   }
   componentDidMount = async () => {
@@ -18,7 +19,7 @@ export class student extends Component {
       }
     );
     let studentInfo = await response.json();
-    this.setState({ studentInfo });
+    this.setState({ studentInfo, projects: studentInfo.projects });
     console.log(studentInfo);
   };
   render() {
@@ -43,7 +44,49 @@ export class student extends Component {
             </p>
           </Col>
         </Row>
-        <Row></Row>
+        <Row className="mt-5">
+          <p className="display-4 text-center">Projects</p>
+          <Table striped bordered hover size="sm">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.projects.map((project) => {
+                return (
+                  <tr>
+                    <td>{project.name}</td>
+                    <td>{project.description}</td>
+                    <td>{project.startDate.slice(0, -14)}</td>
+                    <td>{project.endDate.slice(0, -14)}</td>
+                    <td>
+                      {" "}
+                      <Button
+                        variant="danger"
+                        // onClick={() => this.delStudent(student._id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                    <td>
+                      {" "}
+                      <Button
+                        variant="info"
+                        // onClick={() => this.editStudent(student)}
+                      >
+                        Edit
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </Row>
       </Container>
     );
   }

@@ -87,4 +87,10 @@ router.delete("/:id", async (req, res) => {
     console.log(error);
   }
 });
+
+//DELETE a project
+router.post("/:id/projects/:projId", async (req, res) => {
+  await studentModel.delProject(req.params.id, req.params.projId);
+  res.send("deleted");
+});
 module.exports = router;
