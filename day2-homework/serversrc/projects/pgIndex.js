@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const response = await db.query(`SELECT * FROM projects WHERE _id=$1`, [
+  const response = await db.query(`SELECT * FROM projects WHERE studentid=$1`, [
     req.params.id,
   ]);
   if (response.rowCount === 0) return res.status(404).send("Not Found");
@@ -18,15 +18,14 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const response = await db.query(
-    `INSERT INTO projects (name, description, creationdate, repourl,liveurl,studentid) 
-                                       Values ($1, $2, $3, $4, $5,$6)
+    `INSERT INTO projects (name, description, creationdate, repourl,studentid) 
+                                       Values ($1, $2, $3, $4, $5)
                                        RETURNING *`,
     [
       req.body.name,
       req.body.description,
       req.body.creationdate,
       req.body.repoUrl,
-      req.body.liveUrl,
       req.body.studentId,
     ]
   );

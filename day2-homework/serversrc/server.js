@@ -5,6 +5,7 @@ const pgProjectsRoutes = require("./projects/pgindex");
 const projectRoutes = require("./projects");
 // const reviewsRoutes = require('./reviews')
 const cors = require("cors");
+const dotenv = require("dotenv");
 const endpoints = require("express-list-endpoints");
 const {
   invalidIdHandler,
@@ -13,6 +14,7 @@ const {
 } = require("./errorHandling");
 const mongoose = require("mongoose");
 const db = require("./db");
+dotenv.config();
 
 const server = express();
 server.use(cors());

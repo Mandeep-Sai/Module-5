@@ -21,7 +21,7 @@ class sendStudentForm extends Component {
     this.setState({ formInfo });
   };
   sendInfo = async () => {
-    let response = await fetch("http://127.0.0.1:3002/students", {
+    let response = await fetch("http://127.0.0.1:3003/pg/students/", {
       method: "POST",
       body: JSON.stringify(this.state.formInfo),
       headers: new Headers({
@@ -32,10 +32,8 @@ class sendStudentForm extends Component {
     console.log(text);
     if (response.ok) {
       alert("Sent sucessfully");
-    } else if (response.status === 409) {
-      alert("Email already exists");
     } else {
-      console.log(response);
+      alert("email exists");
     }
   };
   render() {

@@ -27,15 +27,28 @@ router.get("/:id/:email", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const response = await db.query(
-    `INSERT INTO students (name, surname, email, dob) 
-                                     Values ($1, $2, $3, $4)
-                                     RETURNING *`,
-    [req.body.name, req.body.surname, req.body.email, req.body.dob]
-  );
-
-  console.log(response);
-  res.send(response.rows[0]);
+  console.log(req.body);
+  const checkMail = await db.query(`SELECT * FROM students WHERE email = $1`, [
+    req.body.email,
+  ]);
+  if (checkMail.rowCount === 0) {
+    const response = await db.query(
+      `INSERT INTO students (name, surname, email, dob,country) 
+                                       Values ($1, $2, $3, $4,$5)
+                                       RETURNING *`,
+      [
+        req.body.name,
+        req.body.surname,
+        req.body.email,
+        req.body.dateOfBirth,
+        req.body.country,
+      ]
+    );
+    console.log(response);
+    res.send(response.rows[0]);
+  } else {
+    res.status(400).send("email exists");
+  }
 });
 
 router.put("/:id", async (req, res) => {

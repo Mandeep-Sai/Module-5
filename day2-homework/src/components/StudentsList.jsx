@@ -26,10 +26,12 @@ export class StudentsList extends Component {
     };
   }
   componentDidMount = async () => {
-    let defaultResponse = await fetch(`http://127.0.0.1:3002/students`, {
+    let defaultResponse = await fetch(`http://127.0.0.1:3003/pg/students/`, {
       method: "GET",
       headers: new Headers({ "content-type": "application/json" }),
     });
+    // console.log(await defaultResponse.json());
+    /*
     let response = await fetch(
       `http://127.0.0.1:3002/students?limit=${this.state.studentsPerPage}`,
       {
@@ -38,15 +40,16 @@ export class StudentsList extends Component {
       }
     );
     let parsedJson = await response.json();
+    */
     let defaultParsed = await defaultResponse.json();
     this.setState({
-      students: parsedJson,
+      students: defaultParsed,
       numberOfStudents: defaultParsed.length,
     });
     //console.log(parsedJson);
   };
   delStudent = async (id) => {
-    let response = await fetch("http://127.0.0.1:3002/students/" + id, {
+    let response = await fetch("http://127.0.0.1:3003/pg/students/" + id, {
       method: "DELETE",
       headers: new Headers({
         "content-type": "application/json",
@@ -74,7 +77,7 @@ export class StudentsList extends Component {
   };
   sendInfo = async () => {
     let response = await fetch(
-      "http://127.0.0.1:3002/students/" + this.state.currentStudent._id,
+      "http://127.0.0.1:3003/pg/students/" + this.state.currentStudent._id,
       {
         method: "PUT",
         body: JSON.stringify(this.state.currentStudent),
@@ -129,7 +132,7 @@ export class StudentsList extends Component {
                   </td>
                   <td>{student.surname}</td>
                   <td>{student.email}</td>
-                  <td>{student.dateOfBirth}</td>
+                  <td>{student.dob}</td>
                   <td>{student.country}</td>
                   <td>
                     {" "}
@@ -210,6 +213,7 @@ export class StudentsList extends Component {
                 <Col sm={10}>
                   <Form.Control
                     onChange={this.updateStudent}
+                    value={this.state.currentStudent.dob}
                     id="dob"
                     type="date"
                     placeholder="Birthday"

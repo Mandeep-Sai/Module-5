@@ -13,14 +13,33 @@ export class student extends Component {
   }
   componentDidMount = async () => {
     let response = await fetch(
-      "http://127.0.0.1:3002/students/" + this.state.studentId,
+      "http://127.0.0.1:3003/pg/students/" + this.state.studentId,
       {
         method: "GET",
       }
     );
-    let studentInfo = await response.json();
-    this.setState({ studentInfo, projects: studentInfo.projects });
-    console.log(studentInfo);
+    let projectsResponse = await fetch(
+      "http://127.0.0.1:3003/pg/projects/" + this.state.studentId
+    );
+    let projects = await projectsResponse.json();
+    let parsedJson = await response.json();
+    let studentInfo = parsedJson[0];
+    console.log(projects);
+    this.setState({ studentInfo, projects });
+    // this.setState({ studentInfo, projects: studentInfo.projects });
+  };
+  delProject = async (id) => {
+    let response = await fetch("http://127.0.0.1:3003/pg/projects/" + id, {
+      method: "DELETE",
+      headers: new Headers({
+        "content-type": "application/json",
+      }),
+    });
+    if (response.ok) {
+      alert("Deleted sucessfully");
+    } else {
+      alert("Error");
+    }
   };
   render() {
     return (
@@ -40,7 +59,7 @@ export class student extends Component {
               Email: <b>{this.state.studentInfo.email}</b>
             </p>
             <p>
-              Date of Birth: <b>{this.state.studentInfo.dateOfBirth}</b>
+              Date of Birth: <b>{this.state.studentInfo.dob}</b>
             </p>
           </Col>
         </Row>
@@ -51,8 +70,8 @@ export class student extends Component {
               <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th>Creation Date</th>
+                <th>Repo URL</th>
               </tr>
             </thead>
             <tbody>
@@ -61,13 +80,13 @@ export class student extends Component {
                   <tr>
                     <td>{project.name}</td>
                     <td>{project.description}</td>
-                    <td>{project.startDate.slice(0, -14)}</td>
-                    <td>{project.endDate.slice(0, -14)}</td>
+                    <td>{project.creationdate.slice(0, -14)}</td>
+                    <td>{project.repourl}</td>
                     <td>
                       {" "}
                       <Button
                         variant="danger"
-                        // onClick={() => this.delStudent(student._id)}
+                        onClick={() => this.delProject(project._id)}
                       >
                         Delete
                       </Button>
