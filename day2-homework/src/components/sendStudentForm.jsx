@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import StudentsList from "./StudentsList";
+import ProjectsList from "./ProjectsList";
 import { Container, Form, Col, Row, Button } from "react-bootstrap";
 
 class sendStudentForm extends Component {
@@ -114,7 +115,7 @@ class sendStudentForm extends Component {
             Submit
           </Button>
         </Form>
-
+        <ProjectsList />
         <StudentsList func={this.sendInfo} list={this.state.list} />
       </Container>
     );

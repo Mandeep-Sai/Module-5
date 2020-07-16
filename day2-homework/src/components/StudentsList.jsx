@@ -31,19 +31,18 @@ export class StudentsList extends Component {
       headers: new Headers({ "content-type": "application/json" }),
     });
     // console.log(await defaultResponse.json());
-    /*
+
     let response = await fetch(
-      `http://127.0.0.1:3002/students?limit=${this.state.studentsPerPage}`,
+      `http://127.0.0.1:3003/pg/students?limit=${this.state.studentsPerPage}`,
       {
         method: "GET",
         headers: new Headers({ "content-type": "application/json" }),
       }
     );
     let parsedJson = await response.json();
-    */
     let defaultParsed = await defaultResponse.json();
     this.setState({
-      students: defaultParsed,
+      students: parsedJson,
       numberOfStudents: defaultParsed.length,
     });
     //console.log(parsedJson);
@@ -97,7 +96,7 @@ export class StudentsList extends Component {
     const offset = (pageNumber - 1) * this.state.studentsPerPage;
     this.setState({ activePage: pageNumber });
     let response = await fetch(
-      `http://127.0.0.1:3002/students?offset=${offset}&limit=${this.state.studentsPerPage}`,
+      `http://127.0.0.1:3003/pg/students?offset=${offset}&limit=${this.state.studentsPerPage}`,
       {
         method: "GET",
         headers: new Headers({ "content-type": "application/json" }),
@@ -111,6 +110,7 @@ export class StudentsList extends Component {
   render() {
     return (
       <Container>
+        <p className="text-center display-4">Students</p>
         <Table striped bordered hover size="sm">
           <thead>
             <tr>

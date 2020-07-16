@@ -233,7 +233,7 @@ router.post("/sgmail", async (req, res) => {
       sgMail.setApiKey(process.env.sgApiKey);
       const data_64 = base64_encode(pathToAttachment);
       const msg = {
-        to: "bandimandeep7@gmail.com",
+        to: "nathaliemekahal@gmail.com",
         from: "bandimandeep7pay@gmail.com",
         subject: "Subject",
         text: "Text",
