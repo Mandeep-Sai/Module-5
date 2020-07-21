@@ -8,6 +8,7 @@ const { Transform } = require("json2csv");
 const { createReadStream } = require("fs");
 const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
+const postModel = require("./schema");
 //
 const nodemailer = require("nodemailer");
 const nodeMailGun = require("nodemailer-mailgun-transport");
@@ -22,9 +23,14 @@ function base64_encode(file) {
   return new Buffer(bitmap).toString("base64");
 }
 
-router.get("/", (req, res) => {
-  const data = readFile(attendeesPath);
-  res.send(data);
+router.get("/", async (req, res) => {
+  const post = await postModel.find();
+  res.send(post);
+});
+
+router.get("/:id", async (req, res) => {
+  const post = await postModel.findById(req.params.id);
+  res.send(post);
 });
 
 router.get("/csv", (req, res) => {
